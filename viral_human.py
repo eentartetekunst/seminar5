@@ -44,7 +44,9 @@ for line in complete_genome:
     if '>' not in line:
         human_genome += line.replace('N', '').replace('\n', '').upper().replace('S', '').replace('K', '').replace('R', '').replace('W', '').replace('B', '')
 
-human_aa = translate(human_genome)
+dna = Seq(human_genome)
+human_aa = dna.translate()
+
 human_kmers = range_mers(8, 13, human_aa)
 all_human_kmers_set = all_human_kmers_set | human_kmers
 
