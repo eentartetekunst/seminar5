@@ -1,0 +1,47 @@
+from glob import glob
+
+def kmer_dict(k, genome):
+    positions = dict()
+    for i in range(len(genome) - k + 1):
+        k_cur = genome[i: i + k]
+        if k_cur not in positions.keys():
+            positions[k_cur] = [i]
+        else:
+            positions[k_cur].append(i)
+    return positions
+
+def range_mers(x, y, genome): # будет писать в список х-у меры
+    kmers_set = set()
+    for n in range(x, y):
+        cov_kmer = kmer_dict(n, genome)
+        kmers_set = kmers_set | set(cov_kmer.keys())
+    return kmers_set
+
+covids = glob('covids/*.txt') # returns list with paths to files on the folder
+all_kmers_set = set()
+
+for covids_file in covids: # проходим по каждому текстовому файлу
+    with open(covids_file, 'rt') as f:
+        covid_genome = f.readlines()
+        full_genome = ''  # сюда запишем большой строкой содержимое
+        for line in covid_genome:
+            if '>' not in line:
+                full_genome += line.replace('\n', '') # чистый геном  в строке
+        file_kmers = range_mers(9, 10, full_genome) # 8-12 меры данного файла
+        all_kmers_set = all_kmers_set | file_kmers # пишем все кмеры всех файлов в один сет
+
+human_kmers = set()
+with open('proteome.fasta', 'r') as f1:
+    for line in f1:
+        proteome = f1.readlines()
+        h_proteome = ''
+        for line in proteome:
+            if not '>' in line:
+                h_proteome += line.replace('\n', '').replace('*', '')
+        h_kmers = range_mers(9, 10, h_proteome)
+        human_kmers = human_kmers |  h_kmers
+
+viral_in_human = human_kmers & all_kmers_set
+print(viral_in_human)
+
+print(len(viral_in_human))
