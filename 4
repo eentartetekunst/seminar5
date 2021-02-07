@@ -1,0 +1,35 @@
+genome_path =  '/content/hum.fasta'
+
+
+file = open(genome_path, 'r')
+def find_kmers(k):
+    kmers_set = set()
+    prev_line = ''
+    cur_line = ''
+
+    l = True
+    file.seek(0)
+    while True:
+        l = file.readline()
+        if l and l[0] != '>':
+          prev_line, cur_line = cur_line, l.replace('N', '').replace('\n', '').lower().replace('s', '').replace('y', '').replace('m', '').replace('r', '').replace('b', '').replace('w', '').replace('k', '')
+          lines = prev_line + cur_line
+
+          for i in range(len(lines) - k + 1):
+            kmers_set.add(lines[i: i + k])
+
+    return kmers_set
+
+k = 6
+while True:
+    kmers_infile = find_kmers(k)
+    possible_kmers = 4 ** k
+
+    if len(kmers_infile) < possible_kmers:
+        break
+    else:
+        k += 1
+
+
+print(possible_kmers-len(kmers_infile), f"{k}-mer'ов")
+file.close()
