@@ -17,11 +17,11 @@ def range_mers(x, y, genome): # будет писать в список х-у м
         kmers_set = kmers_set | set(cov_kmer.keys())
     return kmers_set
 
-covids = glob('covids/*.txt') # returns list with paths to files on the folder
+covids = glob('covids/*.fasta') # returns list with paths to files on the folder
 all_kmers_set = set()
 
 for covids_file in covids: # проходим по каждому текстовому файлу
-    with open(covids_file, 'rt') as f:
+    with open(covids_file, 'r') as f:
         covid_genome = f.readlines()
         full_genome = ''  # сюда запишем большой строкой содержимое
         for line in covid_genome:
@@ -31,7 +31,7 @@ for covids_file in covids: # проходим по каждому текстов
         all_kmers_set = all_kmers_set | file_kmers # пишем все кмеры всех файлов в один сет
 
 human_kmers = set()
-with open('proteome.fasta', 'r') as f1:
+with open('human_proteome.fasta', 'r') as f1:
     for line in f1:
         proteome = f1.readlines()
         h_proteome = ''
@@ -45,3 +45,12 @@ viral_in_human = human_kmers & all_kmers_set
 print(viral_in_human)
 
 print(len(viral_in_human))
+
+9-меры:
+{'SSRSSSRSR', 'KKDKKKKAD'}
+2
+
+8-меры: 
+
+{'LVDPQIQL', 'ELPDEFVV', 'RRARSVAS', 'SSRSSSRS', 'KKDKKKKA', 'ESGLKTIL', 'VNSVLLFL', 'RRSFYVYA', 'RFNVAITR', 'NVAITRAK', 'DIQLLKSA', 'KDKKKKAD', 'DTSLSGFK', 'SRSSSRSR', 'AKKNNLPF', 'SLKELLQN', 'PDEDEEEG', 'VTLIGEAV', 'GPPGTGKS', 'LALITLAT', 'DEDEEEGD', 'RYPANSIV', 'YNYEPLTQ', 'PGSGVPVV', 'QGPPGTGK', 'DEDDSEPV', 'EVEKGVLP'}
+27
